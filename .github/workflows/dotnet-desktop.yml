@@ -39,10 +39,14 @@ jobs:
             -o ./output
 
       # Step 5: Delete Existing Release (if exists)
-      - name: Delete Existing Release
+      - name: Delete Existing Release and Tag
         run: |
+          # Delete the release if it exists
           gh release delete ${{ env.RELEASE_VERSION }} --yes || echo "No existing release to delete"
-          gh tag delete ${{ env.RELEASE_VERSION }} || echo "No existing tag to delete"
+
+          # Delete the tag if it exists
+          git tag -d ${{ env.RELEASE_VERSION }} || echo "No existing local tag to delete"
+          git push origin --delete ${{ env.RELEASE_VERSION }} || echo "No existing remote tag to delete"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
