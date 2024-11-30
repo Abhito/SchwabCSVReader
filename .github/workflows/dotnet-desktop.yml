@@ -30,9 +30,9 @@ jobs:
       # Step 4: Build and Publish a Portable EXE
       - name: Publish Portable EXE
         run: |
-          dotnet publish -c Release -r win-x64 --self-contained true \
-            -p:PublishSingleFile=true \
-            -p:IncludeNativeLibrariesForSelfExtract=true \
+          dotnet publish -c Release -r win-x64 --self-contained true `
+            "-p:PublishSingleFile=true" `
+            "-p:IncludeNativeLibrariesForSelfExtract=true" `
             -o ./output
 
       # Step 5: Upload the EXE as an artifact
