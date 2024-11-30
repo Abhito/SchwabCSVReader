@@ -40,7 +40,6 @@ jobs:
 
       # Step 5: Delete Existing Release (if exists)
       - name: Delete Existing Release
-        if: always()
         run: |
           gh release delete ${{ env.RELEASE_VERSION }} --yes || echo "No existing release to delete"
           gh tag delete ${{ env.RELEASE_VERSION }} || echo "No existing tag to delete"
