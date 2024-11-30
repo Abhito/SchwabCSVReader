@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - master
+        
+env:
+  RELEASE_VERSION: v1.0.0  # Define the version here
 
 jobs:
   build:
@@ -35,10 +38,35 @@ jobs:
             "-p:IncludeNativeLibrariesForSelfExtract=true" `
             -o ./output
 
-      # Step 5: Upload the EXE as an artifact
-      - name: Upload Portable EXE
-        uses: actions/upload-artifact@v3
+      # Step 5: Delete Existing Release (if exists)
+      - name: Delete Existing Release
+        if: always()
+        run: |
+          gh release delete ${{ env.RELEASE_VERSION }} --yes || echo "No existing release to delete"
+          gh tag delete ${{ env.RELEASE_VERSION }} || echo "No existing tag to delete"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 6: Create a New Release
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
         with:
-          name: SchwabCSVReader
-          path: ./output/*.exe
-          if-no-files-found: error
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: SchwabCSVReader ${{ env.RELEASE_VERSION }}
+          body: |
+            This is an release for SchwabCSVReader.
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 7: Upload the EXE to the Release
+      - name: Upload EXE to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./output/SchwabCSVReader.exe
+          asset_name: SchwabCSVReader.exe
+          asset_content_type: application/octet-stream
