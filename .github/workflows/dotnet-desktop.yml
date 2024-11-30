@@ -27,18 +27,17 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      # Step 4: Build the project
-      - name: Build project
-        run: dotnet build --configuration Release
+      # Step 4: Build and Publish a Portable EXE
+      - name: Publish Portable EXE
+        run: |
+          dotnet publish -c Release -r win-x64 --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -o ./output
 
-      # Step 5: Publish the EXE
-      - name: Publish EXE
-        run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=true -o ./output
-
-
-      # Step 6: Upload the EXE as an artifact
-      - name: Upload EXE
+      # Step 5: Upload the EXE as an artifact
+      - name: Upload Portable EXE
         uses: actions/upload-artifact@v3
         with:
-          name: CombinedCSVReaderExe
-          path: ./output/*
+          name: PortableEXE
+          path: ./output/*.exe
