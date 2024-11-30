@@ -33,7 +33,8 @@ jobs:
 
       # Step 5: Publish the EXE
       - name: Publish EXE
-        run: dotnet publish -c Release -r win-x64 --self-contained true -o ./output
+        run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=true -o ./output
+
 
       # Step 6: Upload the EXE as an artifact
       - name: Upload EXE
