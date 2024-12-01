@@ -41,6 +41,9 @@ jobs:
       # Step 5: Delete Existing Release and Tag
       - name: Delete Existing Release and Tag
         run: |
+          # Set up authentication for `gh` and `git`
+          git config --global url."https://$GITHUB_ACTOR:${{ secrets.PAT_TOKEN }}@github.com".insteadOf "https://github.com"
+
           # Delete the release if it exists
           gh release delete ${{ env.RELEASE_VERSION }} --yes || echo "No existing release to delete"
 
