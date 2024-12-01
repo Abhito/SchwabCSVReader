@@ -37,8 +37,8 @@ jobs:
             "-p:PublishSingleFile=true" `
             "-p:IncludeNativeLibrariesForSelfExtract=true" `
             -o ./output
-
-      # Step 5: Delete Existing Release (if exists)
+          
+      # Step 5: Delete Existing Release and Tag
       - name: Delete Existing Release and Tag
         run: |
           # Delete the release if it exists
@@ -48,9 +48,9 @@ jobs:
           git tag -d ${{ env.RELEASE_VERSION }} || echo "No existing local tag to delete"
           git push origin --delete ${{ env.RELEASE_VERSION }} || echo "No existing remote tag to delete"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}  # Use the PAT Token here
 
-      # Step 6: Create a New Release
+      # Step 6: Create GitHub Release
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -58,12 +58,12 @@ jobs:
           tag_name: ${{ env.RELEASE_VERSION }}
           release_name: SchwabCSVReader ${{ env.RELEASE_VERSION }}
           body: |
-            This is an release for SchwabCSVReader.
+            This is an automated release for SchwabCSVReader.
           draft: false
           prerelease: false
           generate_release_notes: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
       # Step 7: Upload the EXE to the Release
       - name: Upload EXE to Release
